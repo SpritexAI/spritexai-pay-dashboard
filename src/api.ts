@@ -2,9 +2,9 @@
 // Mohammad Sijan (SpritexAI).
 //
 // In dev, requests go through Vite's /api proxy to the live engine. In production
-// the dashboard is served alongside the API, so the base is configurable.
+// the dashboard is served by the engine itself, so the API is same-origin (root).
 
-const BASE = import.meta.env.VITE_API_BASE ?? '/api'
+const BASE = import.meta.env.VITE_API_BASE ?? (import.meta.env.DEV ? '/api' : '')
 
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
