@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+/* SpritEXAI Pay — dashboard design tokens.
+   Mohammad Sijan (SpritexAI). Restrained, product-grade: a near-black neutral
+   canvas, a single confident accent, generous spacing. No gradients-for-the-sake
+   -of-it, no candy colors. */
+@theme {
+  --color-canvas: #0a0a0b;
+  --color-surface: #131316;
+  --color-surface-2: #1a1a1f;
+  --color-border: #26262c;
+  --color-muted: #8a8a94;
+  --color-fg: #ededf0;
+  --color-accent: #6366f1;
+  --color-accent-fg: #ffffff;
+  --color-positive: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  --radius: 0.75rem;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  }
+  /* Tabular figures for money and IDs. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
