@@ -6,10 +6,12 @@ import Overview from './pages/Overview'
 import Charges from './pages/Charges'
 import Devices from './pages/Devices'
 import Gateways from './pages/Gateways'
+import Insights from './pages/Insights'
 
 const NAV = [
   { to: '/', label: 'Overview', end: true },
   { to: '/charges', label: 'Charges' },
+  { to: '/insights', label: 'Insights' },
   { to: '/devices', label: 'Devices' },
   { to: '/gateways', label: 'Gateways' },
 ]
@@ -54,6 +56,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Overview />} />
           <Route path="/charges" element={<Charges />} />
+          <Route path="/insights" element={<Insights />} />
           <Route path="/devices" element={<Devices />} />
           <Route path="/gateways" element={<Gateways />} />
         </Routes>

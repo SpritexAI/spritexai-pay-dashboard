@@ -69,6 +69,26 @@ export interface GatewayConfig {
   created_at: string
 }
 
+export interface Anomaly {
+  kind: 'duplicate_txid' | 'sender_mismatch' | 'amount_anomaly'
+  severity: 'high' | 'medium' | 'low'
+  detail: string
+  txn_id: string | null
+  charge_id: string | null
+}
+
+export interface FraudReport {
+  anomaly_count: number
+  anomalies: Anomaly[]
+}
+
+// Reconciliation chat: the engine's AI layer only routes the question to an
+// intent; the numbers come from a real ledger/fraud query, never invented.
+export interface ChatAnswer {
+  intent: 'reconcile' | 'fraud' | 'unknown'
+  data: Reconciliation | FraudReport | null
+}
+
 export const api = {
   health: () => req<{ status: string; db: boolean }>('/health'),
   reconcile: (gateway?: string) =>
@@ -93,6 +113,12 @@ export const api = {
     label?: string
     account_msisdn?: string
   }) => req<GatewayConfig>('/v1/gateways', { method: 'POST', body: JSON.stringify(input) }),
+  fraudScan: () => req<FraudReport>('/v1/fraud/scan'),
+  reconChat: (question: string) =>
+    req<ChatAnswer>('/v1/recon/chat', {
+      method: 'POST',
+      body: JSON.stringify({ question }),
+    }),
 }
 
 // Money helpers — the engine speaks integer minor units (poisha).
