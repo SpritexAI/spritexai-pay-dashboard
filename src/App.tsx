@@ -2,6 +2,7 @@
 // Mohammad Sijan (SpritexAI).
 
 import { NavLink, Route, Routes } from 'react-router-dom'
+import { token } from './api'
 import Overview from './pages/Overview'
 import Charges from './pages/Charges'
 import Devices from './pages/Devices'
@@ -47,7 +48,18 @@ export default function App() {
         </nav>
 
         <div className="mt-auto px-3 text-xs text-muted">
-          Built by Mohammad Sijan
+          {token.get() && (
+            <button
+              onClick={() => {
+                token.clear()
+                location.reload()
+              }}
+              className="mb-4 text-muted hover:text-fg"
+            >
+              Sign out
+            </button>
+          )}
+          <div>Built by Mohammad Sijan</div>
           <div className="text-muted/60">SpritexAI · RexiO</div>
         </div>
       </aside>

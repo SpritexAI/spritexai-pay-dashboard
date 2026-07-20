@@ -6,13 +6,32 @@
 
 const BASE = import.meta.env.VITE_API_BASE ?? (import.meta.env.DEV ? '/api' : '')
 
+// Bearer token for the admin console, persisted so a refresh keeps you logged in.
+const TOKEN_KEY = 'spx_admin_token'
+export const token = {
+  get: () => localStorage.getItem(TOKEN_KEY),
+  set: (t: string) => localStorage.setItem(TOKEN_KEY, t),
+  clear: () => localStorage.removeItem(TOKEN_KEY),
+}
+
 async function req<T>(path: string, init?: RequestInit): Promise<T> {
+  const t = token.get()
   const res = await fetch(`${BASE}${path}`, {
     ...init,
-    headers: { 'content-type': 'application/json', ...init?.headers },
+    headers: {
+      'content-type': 'application/json',
+      ...(t ? { authorization: `Bearer ${t}` } : {}),
+      ...init?.headers,
+    },
   })
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
+    // Token expired or revoked mid-session: drop it and bounce to the gate.
+    // Skip on the login call itself (a 401 there is just a wrong password).
+    if (res.status === 401 && token.get() && !path.startsWith('/v1/auth/')) {
+      token.clear()
+      location.reload()
+    }
     throw new ApiError(res.status, body.error ?? res.statusText)
   }
   return res.json() as Promise<T>
@@ -102,6 +121,12 @@ export interface RegexSuggestion {
 
 export const api = {
   health: () => req<{ status: string; db: boolean }>('/health'),
+  authStatus: () => req<{ auth_required: boolean }>('/v1/auth/status'),
+  login: (password: string) =>
+    req<{ token: string }>('/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ password }),
+    }),
   reconcile: (gateway?: string) =>
     req<Reconciliation>(`/v1/ledger/query${gateway ? `?gateway=${gateway}` : ''}`),
   getCharge: (id: string) => req<Charge>(`/v1/charges/${id}`),

@@ -60,6 +60,7 @@ export function StatusBadge({ status }: { status: string }) {
 export function Button({
   children,
   variant = 'primary',
+  className = '',
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: 'primary' | 'ghost'
@@ -71,7 +72,7 @@ export function Button({
       ? 'bg-accent text-accent-fg hover:opacity-90'
       : 'border border-border text-fg hover:bg-surface-2'
   return (
-    <button className={`${base} ${styles}`} {...props}>
+    <button className={`${base} ${styles} ${className}`} {...props}>
       {children}
     </button>
   )
