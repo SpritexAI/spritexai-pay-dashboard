@@ -89,11 +89,23 @@ export interface ChatAnswer {
   data: Reconciliation | FraudReport | null
 }
 
+// Advisory regex the AI proposes from real drift samples — a maintainer reviews
+// and edits the engine's parsers by hand; it's never hot-swapped.
+export interface RegexSuggestion {
+  gateway: string
+  sample_count: number
+  txid: string
+  amount: string
+  sender: string
+  note: string
+}
+
 export const api = {
   health: () => req<{ status: string; db: boolean }>('/health'),
   reconcile: (gateway?: string) =>
     req<Reconciliation>(`/v1/ledger/query${gateway ? `?gateway=${gateway}` : ''}`),
   getCharge: (id: string) => req<Charge>(`/v1/charges/${id}`),
+  listCharges: () => req<Charge[]>('/v1/charges'),
   createCharge: (input: {
     order_id: string
     amount_minor: number
@@ -113,6 +125,9 @@ export const api = {
     label?: string
     account_msisdn?: string
   }) => req<GatewayConfig>('/v1/gateways', { method: 'POST', body: JSON.stringify(input) }),
+  listGateways: () => req<GatewayConfig[]>('/v1/gateways'),
+  regexSuggestion: (gateway: string) =>
+    req<RegexSuggestion>(`/v1/gateways/${gateway}/regex-suggestion`),
   fraudScan: () => req<FraudReport>('/v1/fraud/scan'),
   reconChat: (question: string) =>
     req<ChatAnswer>('/v1/recon/chat', {

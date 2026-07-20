@@ -1,13 +1,24 @@
 // SpritEXAI Pay — Overview.
 // Mohammad Sijan (SpritexAI).
 
+import { useState } from 'react'
 import { api, formatMoney } from '../api'
 import { useAsync } from '../useAsync'
 import { Card, StatCard } from '../ui'
 import { PageHeader } from './_shared'
 
+const FILTERS = [
+  { id: undefined, label: 'All' },
+  { id: 'bkash', label: 'bKash' },
+  { id: 'nagad', label: 'Nagad' },
+] as const
+
 export default function Overview() {
-  const { data, error, loading, refetch } = useAsync(() => api.reconcile())
+  const [gateway, setGateway] = useState<string | undefined>(undefined)
+  const { data, error, loading, refetch } = useAsync(
+    () => api.reconcile(gateway),
+    [gateway],
+  )
   const health = useAsync(() => api.health())
 
   return (
@@ -24,6 +35,22 @@ export default function Overview() {
           </button>
         }
       />
+
+      <div className="mb-6 flex gap-2">
+        {FILTERS.map((f) => (
+          <button
+            key={f.label}
+            onClick={() => setGateway(f.id)}
+            className={`rounded-lg border px-3 py-1.5 text-sm transition-colors ${
+              gateway === f.id
+                ? 'border-accent bg-accent/10 text-fg'
+                : 'border-border text-muted hover:text-fg'
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
 
       {error && (
         <Card className="border-danger/40 bg-danger/5 p-4 text-sm text-danger">

@@ -3,10 +3,12 @@
 
 import { useState } from 'react'
 import { api, formatMoney, type Charge } from '../api'
+import { useAsync } from '../useAsync'
 import { Button, Card, Field, Mono, StatusBadge } from '../ui'
 import { PageHeader } from './_shared'
 
 export default function Charges() {
+  const list = useAsync(() => api.listCharges())
   const [created, setCreated] = useState<Charge | null>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState<string | null>(null)
@@ -31,6 +33,7 @@ export default function Charges() {
       })
       setCreated(charge)
       e.currentTarget.reset()
+      list.refetch()
     } catch (e) {
       setErr((e as Error).message)
     } finally {
@@ -134,6 +137,64 @@ export default function Charges() {
           )}
         </Card>
       </div>
+
+      <Card className="mt-6 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4">
+          <div className="text-sm font-medium">Recent charges</div>
+          <button
+            onClick={list.refetch}
+            className="text-sm text-muted hover:text-fg"
+          >
+            Refresh
+          </button>
+        </div>
+        {list.loading && <div className="px-6 pb-6 text-sm text-muted">Loading…</div>}
+        {list.error && <div className="px-6 pb-6 text-sm text-danger">{list.error}</div>}
+        {list.data && list.data.length === 0 && (
+          <div className="px-6 pb-6 text-sm text-muted">No charges yet.</div>
+        )}
+        {list.data && list.data.length > 0 && (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border text-left text-xs text-muted">
+                <th className="px-6 py-3 font-medium">Order</th>
+                <th className="px-6 py-3 font-medium">Amount</th>
+                <th className="px-6 py-3 font-medium">Status</th>
+                <th className="px-6 py-3 font-medium">Charge ID</th>
+                <th className="px-6 py-3 font-medium">Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.data.map((c) => (
+                <tr key={c.id} className="border-b border-border/50 last:border-0">
+                  <td className="px-6 py-3">{c.order_id}</td>
+                  <td className="px-6 py-3 tnum">
+                    {formatMoney(c.amount_minor, c.currency)}
+                  </td>
+                  <td className="px-6 py-3">
+                    <StatusBadge status={c.status} />
+                  </td>
+                  <td className="px-6 py-3">
+                    <button
+                      onClick={() => {
+                        setLookupId(c.id)
+                        setLooked(c)
+                        setLookErr(null)
+                      }}
+                      className="font-mono text-[13px] text-muted hover:text-accent"
+                    >
+                      {c.id}
+                    </button>
+                  </td>
+                  <td className="px-6 py-3 text-muted">
+                    {new Date(c.created_at).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </Card>
     </div>
   )
 }
