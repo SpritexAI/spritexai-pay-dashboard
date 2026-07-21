@@ -135,6 +135,77 @@ export interface NewApiKey {
   api_key: string // shown once
 }
 
+export interface Customer {
+  id: string
+  name: string | null
+  email: string | null
+  msisdn: string | null
+  status: 'active' | 'inactive'
+  created_at: string
+}
+
+export interface LineItem {
+  description: string
+  quantity: number
+  unit_minor: number
+}
+
+export interface Invoice {
+  id: string
+  number: string
+  customer_id: string | null
+  amount_minor: number
+  currency: string
+  status: 'unpaid' | 'paid' | 'refunded' | 'canceled'
+  charge_id: string | null
+  pay_ref: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface PaymentLink {
+  id: string
+  ref: string
+  product_name: string
+  amount_minor: number | null
+  currency: string
+  quantity: number | null
+  status: 'active' | 'inactive'
+  created_at: string
+}
+
+export interface Domain {
+  id: string
+  domain: string
+  created_at: string
+}
+
+export interface Setting {
+  key: string
+  value: string | null
+}
+
+export interface Activity {
+  id: number
+  entity: string
+  entity_id: string
+  action: string
+  actor: string
+  detail: string | null
+  created_at: string
+}
+
+export interface SmsEvent {
+  id: string
+  gateway: string
+  txn_id: string
+  amount_minor: number
+  sender_msisdn: string | null
+  charge_id: string | null
+  matched: number
+  received_at: string
+}
+
 export const api = {
   health: () => req<{ status: string; db: boolean }>('/health'),
   authStatus: () => req<{ auth_required: boolean }>('/v1/auth/status'),
@@ -183,6 +254,52 @@ export const api = {
     }),
   revokeApiKey: (id: string) =>
     req<{ revoked: boolean }>(`/v1/merchant-keys/${id}/revoke`, { method: 'POST' }),
+
+  // Customers
+  listCustomers: () => req<Customer[]>('/v1/customers'),
+  createCustomer: (input: { name?: string; email?: string; msisdn?: string }) =>
+    req<Customer>('/v1/customers', { method: 'POST', body: JSON.stringify(input) }),
+
+  // Invoices
+  listInvoices: () => req<Invoice[]>('/v1/invoices'),
+  getInvoice: (id: string) => req<Invoice>(`/v1/invoices/${id}`),
+  createInvoice: (input: {
+    number?: string
+    customer_id?: string
+    currency?: string
+    items: LineItem[]
+  }) => req<Invoice>('/v1/invoices', { method: 'POST', body: JSON.stringify(input) }),
+  issueInvoice: (id: string) =>
+    req<{ sap_url: string }>(`/v1/invoices/${id}/issue`, { method: 'POST' }),
+
+  // Payment links
+  listPaymentLinks: () => req<PaymentLink[]>('/v1/payment-links'),
+  createPaymentLink: (input: {
+    product_name: string
+    amount_minor?: number
+    currency?: string
+    quantity?: number
+  }) =>
+    req<PaymentLink>('/v1/payment-links', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+
+  // Domains
+  listDomains: () => req<Domain[]>('/v1/domains'),
+  createDomain: (domain: string) =>
+    req<Domain>('/v1/domains', { method: 'POST', body: JSON.stringify({ domain }) }),
+  deleteDomain: (id: string) =>
+    req<void>(`/v1/domains/${id}`, { method: 'DELETE' }),
+
+  // Settings (group = general | brand | currency …)
+  getSettings: (group: string) => req<Setting[]>(`/v1/settings?group=${group}`),
+  setSetting: (key: string, value: string) =>
+    req<void>(`/v1/settings/${key}`, { method: 'PUT', body: JSON.stringify({ value }) }),
+
+  // Activity + SMS
+  listActivities: () => req<Activity[]>('/v1/activities'),
+  listSmsEvents: () => req<SmsEvent[]>('/v1/sms-events'),
 }
 
 // Money helpers — the engine speaks integer minor units (poisha).

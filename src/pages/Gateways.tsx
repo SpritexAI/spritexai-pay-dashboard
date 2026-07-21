@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { api, ApiError, type RegexSuggestion } from '../api'
 import { useAsync } from '../useAsync'
-import { Button, Card, Field, Mono, StatusBadge } from '../ui'
+import { Button, Card, DataTable, Field, Mono, StatusBadge } from '../ui'
 import { PageHeader } from './_shared'
 
 const GATEWAYS = [
@@ -92,45 +92,31 @@ export default function Gateways() {
         <RegexSuggest />
       </div>
 
-      <Card className="mt-6 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="text-sm font-medium">Registered gateways</div>
-          <button onClick={list.refetch} className="text-sm text-muted hover:text-fg">
-            Refresh
-          </button>
-        </div>
-        {list.loading && <div className="px-6 pb-6 text-sm text-muted">Loading…</div>}
-        {list.error && <div className="px-6 pb-6 text-sm text-danger">{list.error}</div>}
-        {list.data && list.data.length === 0 && (
-          <div className="px-6 pb-6 text-sm text-muted">No gateways registered yet.</div>
-        )}
-        {list.data && list.data.length > 0 && (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left text-xs text-muted">
-                <th className="px-6 py-3 font-medium">Gateway</th>
-                <th className="px-6 py-3 font-medium">Label</th>
-                <th className="px-6 py-3 font-medium">Account</th>
-                <th className="px-6 py-3 font-medium">Status</th>
+      <div className="mt-6">
+        {list.loading && <div className="text-sm text-muted">Loading…</div>}
+        {list.error && <div className="text-sm text-danger">{list.error}</div>}
+        {!list.loading && !list.error && (
+          <DataTable
+            columns={['Gateway', 'Label', 'Account', 'Status']}
+            count={list.data?.length ?? 0}
+            empty={!list.data || list.data.length === 0}
+            emptyLabel="No gateways registered yet"
+          >
+            {list.data?.map((g) => (
+              <tr key={g.id} className="border-b border-border/50 last:border-0">
+                <td className="px-5 py-3 capitalize">{g.gateway}</td>
+                <td className="px-5 py-3">{g.label ?? '—'}</td>
+                <td className="px-5 py-3">
+                  <Mono>{g.account_msisdn ?? '—'}</Mono>
+                </td>
+                <td className="px-5 py-3">
+                  <StatusBadge status={g.enabled ? 'active' : 'revoked'} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {list.data.map((g) => (
-                <tr key={g.id} className="border-b border-border/50 last:border-0">
-                  <td className="px-6 py-3 capitalize">{g.gateway}</td>
-                  <td className="px-6 py-3">{g.label ?? '—'}</td>
-                  <td className="px-6 py-3">
-                    <Mono>{g.account_msisdn ?? '—'}</Mono>
-                  </td>
-                  <td className="px-6 py-3">
-                    <StatusBadge status={g.enabled ? 'active' : 'revoked'} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+            ))}
+          </DataTable>
         )}
-      </Card>
+      </div>
     </div>
   )
 }

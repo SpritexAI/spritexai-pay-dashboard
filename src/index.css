@@ -1,21 +1,21 @@
 @import 'tailwindcss';
 
 /* SpritEXAI Pay — dashboard design tokens.
-   Mohammad Sijan (SpritexAI). Restrained, product-grade: a near-black neutral
-   canvas, a single confident accent, generous spacing. No gradients-for-the-sake
-   -of-it, no candy colors. */
+   Mohammad Sijan (SpritexAI). Light, product-grade admin surface: a soft neutral
+   canvas, white cards, a single confident indigo accent, generous spacing. Clean
+   and legible — no gradients-for-the-sake-of-it, no candy colors. */
 @theme {
-  --color-canvas: #0a0a0b;
-  --color-surface: #131316;
-  --color-surface-2: #1a1a1f;
-  --color-border: #26262c;
-  --color-muted: #8a8a94;
-  --color-fg: #ededf0;
-  --color-accent: #6366f1;
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-2: #f1f2f5;
+  --color-border: #e6e8ec;
+  --color-muted: #6b7280;
+  --color-fg: #14161a;
+  --color-accent: #5f38f9;
   --color-accent-fg: #ffffff;
-  --color-positive: #34d399;
-  --color-warning: #fbbf24;
-  --color-danger: #f87171;
+  --color-positive: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;

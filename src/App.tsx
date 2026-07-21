@@ -1,81 +1,46 @@
-// SpritEXAI Pay — dashboard shell.
+// SpritEXAI Pay — dashboard routes.
 // Mohammad Sijan (SpritexAI).
 
-import { NavLink, Route, Routes } from 'react-router-dom'
-import { token } from './api'
-import Overview from './pages/Overview'
-import Charges from './pages/Charges'
-import Devices from './pages/Devices'
+import { Route, Routes } from 'react-router-dom'
+import Layout from './Layout'
+import Dashboard from './pages/Dashboard'
+import Reports from './pages/Reports'
 import Gateways from './pages/Gateways'
-import Insights from './pages/Insights'
+import Customers from './pages/Customers'
+import Transactions from './pages/Transactions'
+import Invoices from './pages/Invoices'
+import PaymentLinks from './pages/PaymentLinks'
+import BrandSettings from './pages/BrandSettings'
+import SmsData from './pages/SmsData'
+import Devices from './pages/Devices'
+import Addons from './pages/Addons'
+import Domains from './pages/Domains'
 import ApiKeys from './pages/ApiKeys'
-
-const NAV = [
-  { to: '/', label: 'Overview', end: true },
-  { to: '/charges', label: 'Charges' },
-  { to: '/insights', label: 'Insights' },
-  { to: '/devices', label: 'Devices' },
-  { to: '/gateways', label: 'Gateways' },
-  { to: '/api-keys', label: 'API Keys' },
-]
+import Staff from './pages/Staff'
+import SystemSettings from './pages/SystemSettings'
+import Activities from './pages/Activities'
 
 export default function App() {
   return (
-    <div className="flex min-h-svh">
-      <aside className="fixed inset-y-0 flex w-60 flex-col border-r border-border bg-surface px-4 py-6">
-        <div className="px-2">
-          <div className="text-[15px] font-semibold tracking-tight">
-            SpritEXAI <span className="text-accent">Pay</span>
-          </div>
-          <div className="mt-0.5 text-xs text-muted">Merchant console</div>
-        </div>
-
-        <nav className="mt-8 flex flex-col gap-1">
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                `rounded-lg px-3 py-2 text-sm transition-colors ${
-                  isActive
-                    ? 'bg-surface-2 text-fg'
-                    : 'text-muted hover:text-fg hover:bg-surface-2/50'
-                }`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="mt-auto px-3 text-xs text-muted">
-          {token.get() && (
-            <button
-              onClick={() => {
-                token.clear()
-                location.reload()
-              }}
-              className="mb-4 text-muted hover:text-fg"
-            >
-              Sign out
-            </button>
-          )}
-          <div>Built by Mohammad Sijan</div>
-          <div className="text-muted/60">SpritexAI · RexiO</div>
-        </div>
-      </aside>
-
-      <main className="ml-60 flex-1 px-10 py-8">
-        <Routes>
-          <Route path="/" element={<Overview />} />
-          <Route path="/charges" element={<Charges />} />
-          <Route path="/insights" element={<Insights />} />
-          <Route path="/devices" element={<Devices />} />
-          <Route path="/gateways" element={<Gateways />} />
-          <Route path="/api-keys" element={<ApiKeys />} />
-        </Routes>
-      </main>
-    </div>
+    <Layout>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/gateways" element={<Gateways />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/transactions" element={<Transactions />} />
+        <Route path="/invoices" element={<Invoices />} />
+        <Route path="/payment-links" element={<PaymentLinks />} />
+        <Route path="/brand-settings" element={<BrandSettings />} />
+        <Route path="/sms-data" element={<SmsData />} />
+        <Route path="/devices" element={<Devices />} />
+        <Route path="/addons" element={<Addons />} />
+        <Route path="/domains" element={<Domains />} />
+        <Route path="/api-keys" element={<ApiKeys />} />
+        <Route path="/staff" element={<Staff />} />
+        <Route path="/system-settings" element={<SystemSettings />} />
+        <Route path="/activities" element={<Activities />} />
+      </Routes>
+    </Layout>
   )
 }

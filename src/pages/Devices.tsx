@@ -5,7 +5,7 @@ import { useState } from 'react'
 import QRCode from 'qrcode'
 import { api, type PairedDevice } from '../api'
 import { useAsync } from '../useAsync'
-import { Button, Card, Mono, StatusBadge } from '../ui'
+import { Button, Card, DataTable, Mono, StatusBadge } from '../ui'
 import { PageHeader } from './_shared'
 
 export default function Devices() {
@@ -36,6 +36,11 @@ export default function Devices() {
       <PageHeader
         title="Devices"
         subtitle="Android SMS forwarders linked to this account"
+        action={
+          <Button onClick={pair} disabled={busy}>
+            {busy ? 'Pairing…' : 'Connect Device'}
+          </Button>
+        }
       />
 
       <Card className="mb-6 p-6">
@@ -78,41 +83,31 @@ export default function Devices() {
         )}
       </Card>
 
-      <Card className="overflow-hidden">
-        {loading && <div className="p-6 text-sm text-muted">Loading…</div>}
-        {error && <div className="p-6 text-sm text-danger">{error}</div>}
-        {data && data.length === 0 && (
-          <div className="p-6 text-sm text-muted">No devices paired yet.</div>
-        )}
-        {data && data.length > 0 && (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left text-xs text-muted">
-                <th className="px-6 py-3 font-medium">Label</th>
-                <th className="px-6 py-3 font-medium">Status</th>
-                <th className="px-6 py-3 font-medium">Device ID</th>
-                <th className="px-6 py-3 font-medium">Paired</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((d) => (
-                <tr key={d.id} className="border-b border-border/50 last:border-0">
-                  <td className="px-6 py-3">{d.label ?? '—'}</td>
-                  <td className="px-6 py-3">
-                    <StatusBadge status={d.status} />
-                  </td>
-                  <td className="px-6 py-3">
-                    <Mono>{d.id}</Mono>
-                  </td>
-                  <td className="px-6 py-3 text-muted">
-                    {new Date(d.created_at).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </Card>
+      {loading && <div className="text-sm text-muted">Loading…</div>}
+      {error && <div className="text-sm text-danger">{error}</div>}
+      {!loading && !error && (
+        <DataTable
+          columns={['Label', 'Status', 'Device ID', 'Paired']}
+          count={data?.length ?? 0}
+          empty={!data || data.length === 0}
+          emptyLabel="No devices paired yet"
+        >
+          {data?.map((d) => (
+            <tr key={d.id} className="border-b border-border/50 last:border-0">
+              <td className="px-5 py-3">{d.label ?? '—'}</td>
+              <td className="px-5 py-3">
+                <StatusBadge status={d.status} />
+              </td>
+              <td className="px-5 py-3">
+                <Mono>{d.id}</Mono>
+              </td>
+              <td className="px-5 py-3 text-muted">
+                {new Date(d.created_at).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
+        </DataTable>
+      )}
     </div>
   )
 }
