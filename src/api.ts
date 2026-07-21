@@ -119,6 +119,22 @@ export interface RegexSuggestion {
   note: string
 }
 
+export interface ApiKey {
+  id: string
+  label: string | null
+  scopes: string // JSON array string
+  status: 'active' | 'revoked'
+  created_at: string
+  last_used_at: string | null
+}
+
+export interface NewApiKey {
+  id: string
+  label: string | null
+  scopes: string[]
+  api_key: string // shown once
+}
+
 export const api = {
   health: () => req<{ status: string; db: boolean }>('/health'),
   authStatus: () => req<{ auth_required: boolean }>('/v1/auth/status'),
@@ -159,6 +175,14 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ question }),
     }),
+  listApiKeys: () => req<ApiKey[]>('/v1/merchant-keys'),
+  createApiKey: (label?: string) =>
+    req<NewApiKey>('/v1/merchant-keys', {
+      method: 'POST',
+      body: JSON.stringify({ label }),
+    }),
+  revokeApiKey: (id: string) =>
+    req<{ revoked: boolean }>(`/v1/merchant-keys/${id}/revoke`, { method: 'POST' }),
 }
 
 // Money helpers — the engine speaks integer minor units (poisha).

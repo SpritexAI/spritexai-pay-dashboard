@@ -8,6 +8,7 @@ import Charges from './pages/Charges'
 import Devices from './pages/Devices'
 import Gateways from './pages/Gateways'
 import Insights from './pages/Insights'
+import ApiKeys from './pages/ApiKeys'
 
 const NAV = [
   { to: '/', label: 'Overview', end: true },
@@ -15,6 +16,7 @@ const NAV = [
   { to: '/insights', label: 'Insights' },
   { to: '/devices', label: 'Devices' },
   { to: '/gateways', label: 'Gateways' },
+  { to: '/api-keys', label: 'API Keys' },
 ]
 
 export default function App() {
@@ -71,6 +73,7 @@ export default function App() {
           <Route path="/insights" element={<Insights />} />
           <Route path="/devices" element={<Devices />} />
           <Route path="/gateways" element={<Gateways />} />
+          <Route path="/api-keys" element={<ApiKeys />} />
         </Routes>
       </main>
     </div>
