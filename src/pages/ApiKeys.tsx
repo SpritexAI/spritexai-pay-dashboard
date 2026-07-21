@@ -59,7 +59,7 @@ export default function ApiKeys() {
               {fresh.api_key}
             </div>
             <div className="mt-2 text-xs text-muted">
-              Send it as the <Mono>mh-piprapay-api-key</Mono> header (or{' '}
+              Send it as the <Mono>x-sap-api-key</Mono> header (or{' '}
               <Mono>Authorization: Bearer</Mono>).
             </div>
           </div>
