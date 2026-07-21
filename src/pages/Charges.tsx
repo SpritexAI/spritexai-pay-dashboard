@@ -21,7 +21,10 @@ export default function Charges() {
     e.preventDefault()
     setBusy(true)
     setErr(null)
-    const form = new FormData(e.currentTarget)
+    // Grab the form now — after `await`, React may have detached `e.currentTarget`
+    // (it's null by then), so calling .reset() on it would throw.
+    const formEl = e.currentTarget
+    const form = new FormData(formEl)
     const amountBdt = Number(form.get('amount'))
     try {
       const charge = await api.createCharge({
@@ -32,7 +35,7 @@ export default function Charges() {
         callback_url: String(form.get('callback_url') || '') || undefined,
       })
       setCreated(charge)
-      e.currentTarget.reset()
+      formEl.reset()
       list.refetch()
     } catch (e) {
       setErr((e as Error).message)

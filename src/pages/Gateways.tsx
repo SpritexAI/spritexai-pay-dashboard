@@ -25,7 +25,8 @@ export default function Gateways() {
     setBusy(true)
     setMsg(null)
     setErr(null)
-    const form = new FormData(e.currentTarget)
+    const formEl = e.currentTarget
+    const form = new FormData(formEl)
     try {
       const gw = await api.registerGateway({
         gateway,
@@ -33,7 +34,7 @@ export default function Gateways() {
         account_msisdn: String(form.get('account_msisdn') || '') || undefined,
       })
       setMsg(`Registered ${gw.gateway} · ${gw.id}`)
-      e.currentTarget.reset()
+      formEl.reset()
       list.refetch()
     } catch (e) {
       setErr((e as Error).message)
